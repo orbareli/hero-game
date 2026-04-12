@@ -4,29 +4,38 @@ from motor.motor_asyncio import AsyncIOMotorClient
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
 DB_NAME = "fight_game"
 
+
 class MongoManager:
     def __init__(self):
         self.client = None
-        self.db = None
+        self._db = None  # private to avoid __getattr__ loop
 
-    # This MUST be named 'connect' to match your main.py call
     async def connect(self):
         self.client = AsyncIOMotorClient(MONGO_URL)
-        self.db = self.client[DB_NAME]
-        print("Successfully connected to MongoDB.")
+        self._db = self.client[DB_NAME]
+        print(f"✓ Connected to MongoDB ({DB_NAME})")
 
     async def close(self):
         if self.client:
             self.client.close()
+            print("✓ MongoDB connection closed")
 
     async def ping(self):
         try:
-            await self.db.command("ping")
+            await self._db.command("ping")
             return True
-        except:
+        except Exception:
             return False
-    def __getattr__(self, name):
-        return getattr(self.db, name)
 
-# Instantiate the singleton
+    def __getattr__(self, name: str):
+        """
+        Proxy attribute access to the underlying Motor database.
+        db.players  →  self._db["players"]  (a Motor Collection)
+        """
+        if name.startswith("_") or name in ("client", "connect", "close", "ping"):
+            raise AttributeError(name)
+        return getattr(self._db, name)
+
+
+# Singleton — import this everywhere
 db = MongoManager()

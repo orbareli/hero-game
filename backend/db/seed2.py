@@ -22,12 +22,13 @@ characters = [
     {
         "name": "omni-man",
         "faction": "hero",          # "hero" or "villain"
+        "element": "Power", # הוספת אלמנט
         "rarity": "SR",             # "C", "R", "SR", or "UR"
         "base_hp":    1600,
         "base_atk":   100,
-        "base_def":   80,
+        "base_def":   25,
         "base_spd":   8,            # higher = acts first
-        "base_crit":  40,           # % chance to crit
+        "base_crit":  35,           # % chance to crit
         "base_evade": 15,           # % chance to dodge
         "passive_name": "MyPassive",
         "passive_desc": "Omni man s1",
@@ -40,10 +41,11 @@ characters = [
     {
         "name": "invincible",
         "faction": "hero",          # "hero" or "villain"
+        "element": "Power", # הוספת אלמנט
         "rarity": "SR",             # "C", "R", "SR", or "UR"
-        "base_hp":    1200,
+        "base_hp":    1250,
         "base_atk":   100,
-        "base_def":   30,
+        "base_def":   15,
         "base_spd":   6,            # higher = acts first
         "base_crit":  20,           # % chance to crit
         "base_evade": 20,           # % chance to dodge
@@ -58,6 +60,7 @@ characters = [
         {
         "name": "conquest",
         "faction": "villain",          # "hero" or "villain"
+        "element": "Power", # הוספת אלמנט
         "rarity": "UR",             # "C", "R", "SR", or "UR"
         "base_hp":    2000,
         "base_atk":   160,
@@ -76,10 +79,11 @@ characters = [
     {
         "name": "Atom Eve",
         "faction": "hero",
+        "element": "Power", # הוספת אלמנט
         "rarity": "UR",
         "base_hp": 1000,
         "base_atk": 70,
-        "base_def": 90,
+        "base_def": 20,
         "base_spd": 4,
         "base_crit": 12,
         "base_evade": 15,
@@ -94,10 +98,11 @@ characters = [
     {
         "name": "Allen the Alien",
         "faction": "hero",
+        "element": "Power", # הוספת אלמנט
         "rarity": "UR",
         "base_hp": 1700,
         "base_atk": 95,
-        "base_def": 130,
+        "base_def": 35,
         "base_spd": 4,
         "base_crit": 7,
         "base_evade": 10,
@@ -112,10 +117,11 @@ characters = [
     {
         "name": "Cecil Stedman",
         "faction": "villain",
+        "element": "Tech", # הוספת אלמנט
         "rarity": "UR",
         "base_hp": 750,
         "base_atk": 75,
-        "base_def": 100,
+        "base_def": 30,
         "base_spd": 7,
         "base_crit": 15,
         "base_evade": 45,
@@ -130,10 +136,11 @@ characters = [
     {
         "name": "Superman",
         "faction": "villain",
+        "element": "Power", # הוספת אלמנט
         "rarity": "UR",
         "base_hp": 2500,
         "base_atk": 200,
-        "base_def": 180,
+        "base_def": 23,
         "base_spd": 6,
         "base_crit": 15,
         "base_evade": 5,
@@ -148,10 +155,11 @@ characters = [
     {
         "name": "The Flash",
         "faction": "villain",
+        "element": "Speed", # הוספת אלמנט
         "rarity": "UR",
         "base_hp": 900,
         "base_atk": 110,
-        "base_def": 80,
+        "base_def": 10,
         "base_spd": 12,
         "base_crit": 25,
         "base_evade": 45,
@@ -166,10 +174,11 @@ characters = [
     {
         "name": "Wonder Woman",
         "faction": "villain",
+        "element": "Power", # הוספת אלמנט
         "rarity": "UR",
         "base_hp": 1600,
         "base_atk": 160,
-        "base_def": 150,
+        "base_def": 30,
         "base_spd": 5,
         "base_crit": 20,
         "base_evade": 15,
@@ -184,13 +193,14 @@ characters = [
     {
         "name": "Batman",
         "faction": "villain",
+        "element": "Tech", # הוספת אלמנט
         "rarity": "SR",
         "base_hp": 1100,
         "base_atk": 130,
-        "base_def": 110,
+        "base_def": 15,
         "base_spd": 8,
         "base_crit": 30,
-        "base_evade": 25,
+        "base_evade": 30,
         "passive_name": "Prep Time",
         "passive_desc": "Increases Crit Damage by 50% but reduces Base HP.",
         "skill_name": "Explosive Batarang",
@@ -202,13 +212,14 @@ characters = [
     {
         "name": "Homelander",
         "faction": "villain",
+        "element": "Power", # הוספת אלמנט
         "rarity": "UR",
         "base_hp": 1900,
-        "base_atk": 220,
-        "base_def": 140,
+        "base_atk": 170,
+        "base_def": 5,
         "base_spd": 5,
         "base_crit": 10,
-        "base_evade": 8,
+        "base_evade": 5,
         "passive_name": "God Complex",
         "passive_desc": "Deals 20% more damage against enemies with lower ATK than him.",
         "skill_name": "Laser Eyes",
@@ -218,30 +229,13 @@ characters = [
         "portrait_id": "homelander"
     },
     {
-        "name": "Ironclad",
-        "faction": "hero",
-        "rarity": "R",
-        "base_hp": 1520,
-        "base_atk": 70,
-        "base_def": 55,
-        "base_spd": 4,
-        "base_crit": 10,
-        "base_evade": 5,
-        "passive_name": "Steel Skin",
-        "passive_desc": "Reduces all incoming damage by 8%.",
-        "skill_name": "Shield Slam",
-        "skill_desc": "Deals 1.8x ATK damage and reduces enemy ATK by 15% for 2 turns.",
-        "skill_mult": 1.8,
-        "skill_cd": 3,
-        "portrait_id": "ironclad",
-    },
-    {
         "name": "Swiftbolt",
         "faction": "hero",
+        "element": "Power", # הוספת אלמנט
         "rarity": "C",
         "base_hp": 1300,
         "base_atk": 95,
-        "base_def": 20,
+        "base_def": 10,
         "base_spd": 9,
         "base_crit": 25,
         "base_evade": 18,
@@ -256,10 +250,11 @@ characters = [
     {
         "name": "Void Queen",
         "faction": "villain",
+        "element": "Power", # הוספת אלמנט
         "rarity": "UR",
         "base_hp": 1560,
         "base_atk": 110,
-        "base_def": 40,
+        "base_def": 15,
         "base_spd": 7,
         "base_crit": 22,
         "base_evade": 12,
@@ -274,6 +269,7 @@ characters = [
     {
         "name": "Graviton",
         "faction": "villain",
+        "element": "Power", # הוספת אלמנט
         "rarity": "SR",
         "base_hp": 480,
         "base_atk": 80,

@@ -80,3 +80,7 @@ async def health():
 @app.get("/", tags=["Meta"])
 def root():
     return {"message": "Fight Game API — visit /docs for the full API reference"}
+
+# ── 3v3 interactive battle ──────────────────────────────────────────
+from ws.battle_ws_3v3 import router as battle_3v3_router
+app.include_router(battle_3v3_router, tags=["Battle 3v3"])

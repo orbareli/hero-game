@@ -33,6 +33,7 @@ export default function TowerBattle({ sessionId, floorData, onBattleEnd, onBack 
   const [damagePopups,   setDamagePopups]   = useState([])
   const [phase,          setPhase]          = useState('connecting')
   const [enemyActing,    setEnemyActing]    = useState(null)
+  const [critTargets,    setCritTargets]    = useState(new Set())
 
   const wsRef    = useRef(null)
   const logRef   = useRef(null)
@@ -91,6 +92,10 @@ export default function TowerBattle({ sessionId, floorData, onBattleEnd, onBack 
           setEvents(prev => [...prev, { ...ev, id: Date.now() + Math.random() }])
           if (ev.damage > 0) spawnPopup(ev.damage, ev.crit, ev.actor_team === 'player' ? 'right' : 'left')
           if (ev.heal   > 0) spawnHealPopup(ev.heal, ev.actor_team === 'player' ? 'left' : 'right')
+          if (ev.crit && ev.target) {
+            setCritTargets(prev => new Set([...prev, ev.target]))
+            setTimeout(() => setCritTargets(prev => { const n = new Set(prev); n.delete(ev.target); return n }), 600)
+          }
         })
         break
       case 'battle_end':
@@ -199,6 +204,7 @@ export default function TowerBattle({ sessionId, floorData, onBattleEnd, onBack 
             isActive={enemyActing === i}
             isTarget={inputReq && selectedTarget === i && targetMode === 'enemy'}
             isSelectable={!!inputReq && f.is_alive && targetMode === 'enemy'}
+            isCritShaking={critTargets.has(f.name)}
             onClick={() => inputReq && setSelectedTarget(i)}
           />
         ))}
@@ -226,6 +232,7 @@ export default function TowerBattle({ sessionId, floorData, onBattleEnd, onBack 
             isActive={inputReq?.actor?.pc_id === f.pc_id}
             isTarget={false}
             isSelectable={false}
+            isCritShaking={critTargets.has(f.name)}
             onClick={() => {}}
             showPersistentWarning={f.hp < f.max_hp * 0.40}
           />
@@ -331,7 +338,7 @@ export default function TowerBattle({ sessionId, floorData, onBattleEnd, onBack 
 
 
 // ── Fighter card with tower-specific additions ────────────────────────────────
-function TowerFighterCard({ fighter, side, isBoss, isActive, isTarget, isSelectable, onClick, showPersistentWarning }) {
+function TowerFighterCard({ fighter, side, isBoss, isActive, isTarget, isSelectable, onClick, showPersistentWarning, isCritShaking = false }) {
   const hpPct    = fighter.max_hp > 0 ? (fighter.hp / fighter.max_hp) * 100 : 0
   const hpColor  = hpPct > 50 ? '#22c55e' : hpPct > 20 ? '#eab308' : '#ef4444'
   const elemColor = ELEMENT_COLOR[fighter.element] || '#94a3b8'
@@ -346,6 +353,7 @@ function TowerFighterCard({ fighter, side, isBoss, isActive, isTarget, isSelecta
         !fighter.is_alive ? 'dead' : '',
         isBoss      ? 'boss-fighter' : '',
         showPersistentWarning ? 'hp-warning' : '',
+        isCritShaking ? 'crit-shake' : '',
       ].join(' ')}
       style={{ '--elem-color': elemColor }}
       onClick={isSelectable ? onClick : undefined}

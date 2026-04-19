@@ -84,3 +84,10 @@ def root():
 # ── 3v3 interactive battle ──────────────────────────────────────────
 from ws.battle_ws_3v3 import router as battle_3v3_router
 app.include_router(battle_3v3_router, tags=["Battle 3v3"])
+
+# ── Tower of Trials ─────────────────────────────────────────────────
+from routers.tower import router as tower_router
+from ws.tower_battle_ws import router as tower_battle_router
+
+app.include_router(tower_router,        tags=["Tower"])
+app.include_router(tower_battle_router, tags=["Tower Battle"])

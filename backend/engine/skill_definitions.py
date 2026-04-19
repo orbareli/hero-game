@@ -45,7 +45,12 @@ SKILL_CATALOGUE: dict[str, list[SkillDef]] = {
                  "1.2× ATK to all enemies (AoE).",
                  1.2, SECONDARY_COST, "enemy"),
     ],
+    "monster-girl": [
+        SkillDef("Primal Rage",
+                 "2.8× ATK and lose 0.1 hp.",
+                 2.8, PRIMARY_COST, "enemy"),
 
+    ],
     "conquest": [
         SkillDef("Inexorable Assault",
                  "3-hit combo, each hit shreds 10% enemy DEF permanently.",
@@ -54,14 +59,103 @@ SKILL_CATALOGUE: dict[str, list[SkillDef]] = {
 
     "Atom Eve": [
         SkillDef("Molecular Manipulation",
-                 "1.3× damage + restore 50% of dmg as HP.",
+                 "1.3× damage + restore 150% of dmg as HP.",
                  1.3, PRIMARY_COST, "enemy"),
         SkillDef("Healing Touch",
-                 "Restore 150% ATK as HP to one ally.",
-                 1.5, SECONDARY_COST, "ally"),
+                 "Restore 200% ATK as HP to one ally.",
+                 2.0, SECONDARY_COST, "ally"),
         SkillDef("Molecular Shield",
-                 "Shield an ally: reduce their incoming damage by 20% for 2 turns.",
+                 "Shield an ally: reduce their incoming damage by 50% for 2 turns.",
                  0.0, TERTIARY_COST, "ally"),
+    ],
+    "Thragg":[
+        SkillDef("Grand Regent's Might",
+                 "2.9 dmg .",
+                 2.9, PRIMARY_COST, "enemy"),
+    ],
+        "Saitama": [
+        SkillDef("One Punch",
+                 "5.0× dmg, ignores ALL DEF. Cannot miss (no evade check).",
+                 5.0, PRIMARY_COST, "enemy"),
+        SkillDef("Serious Series: Serious Punch",
+                 "8.0× dmg, ignores ALL DEF. Costs 80 energy — the real one.",
+                 8.0, TERTIARY_COST, "enemy"),
+    ],
+ 
+    "Goku": [
+        SkillDef("Kamehameha",
+                 "3.0× beam, ignores 40% DEF.",
+                 3.0, PRIMARY_COST, "enemy"),
+        SkillDef("Instant Transmission",
+                 "Teleport strike: 2.0× dmg + guaranteed crit + untargetable this round.",
+                 2.0, SECONDARY_COST, "enemy"),
+        SkillDef("Spirit Bomb",
+                 "2.5× AoE dmg to ALL enemies, ignores 30% DEF.",
+                 2.5, TERTIARY_COST, "aoe"),
+    ],
+ 
+    "Magneto": [
+        SkillDef("Magnetic Crush",
+                 "2.2× dmg. Tech enemies take 40% more. ATK-down applied.",
+                 2.2, PRIMARY_COST, "enemy"),
+        SkillDef("Metal Storm",
+                 "1.5× AoE dmg. Tech enemies also stunned for 1 turn.",
+                 1.5, SECONDARY_COST, "aoe"),
+        SkillDef("Magnetic Fortress",
+                 "Raise a magnetic shield: apply DEF +30% to an ally for 2 turns.",
+                 0.0, TERTIARY_COST, "ally"),
+    ],
+ 
+    "Black Widow": [
+        SkillDef("Widow's Bite",
+                 "1.6× dmg, guaranteed crit (2.0× crit bonus), stuns target.",
+                 1.6, PRIMARY_COST, "enemy"),
+        SkillDef("Tactical Takedown",
+                 "1.0× dmg + apply ATK-down and SPD-down for 2 turns.",
+                 1.0, SECONDARY_COST, "enemy"),
+    ],
+    "Thor": [
+    
+        SkillDef("Mjolnir's Strike",
+                 "2.8× dmg .",
+                 2.8, PRIMARY_COST, "enemy"),
+    ],
+    "Iron Man": [        
+        SkillDef("Unibeam",
+                 "High precision beam dealing 2.2x damage",
+                 2.2, PRIMARY_COST, "enemy"),
+        SkillDef("Micro-Missile Barrage",
+                 "High precision beam dealing 2.2x damage to all.",
+                 1, SECONDARY_COST, "enemy"),
+    ],
+    "Hulk": [
+        SkillDef("Gamma Slam",
+                 "2.5× dmg scaling with rage (missing HP %). More damage the angrier he is.",
+                 2.5, PRIMARY_COST, "enemy"),
+        SkillDef("Thunderclap",
+                 "0.8× AoE dmg to ALL enemies + stuns everyone for 1 turn.",
+                 0.8, SECONDARY_COST, "aoe"),
+        SkillDef("Hulk Smash",
+                 "4.0× single target — pure destruction. Ignores 50% DEF.",
+                 4.0, TERTIARY_COST, "enemy"),
+    ],
+ 
+    "Spider-Man": [
+        SkillDef("Web Shot",
+                 "1.8× dmg + webs target, reducing their SPD by 4 for 2 turns.",
+                 1.8, PRIMARY_COST, "enemy"),
+        SkillDef("Web Barrage",
+                 "0.9× AoE web covering ALL enemies. SPD -3 for 2 turns each.",
+                 0.9, SECONDARY_COST, "aoe"),
+    ],
+ 
+    "Soldier Boy": [
+        SkillDef("Compound V Blast",
+                 "2.0× dmg ignoring 60% DEF. Target ATK -25% for 2 turns.",
+                 2.0, PRIMARY_COST, "enemy"),
+        SkillDef("Soldier's Fury",
+                 "4-hit burst at 0.5× each — 2.0× total dmg.",
+                 0.5, SECONDARY_COST, "enemy"),
     ],
 
     "Allen the Alien": [
@@ -78,8 +172,8 @@ SKILL_CATALOGUE: dict[str, list[SkillDef]] = {
                  "1.7× dmg + reduce target SPD for 2 turns.",
                  1.7, PRIMARY_COST, "enemy"),
         SkillDef("Satellite Network",
-                 "Medical drone heals most-injured ally for 100% of Cecil's ATK.",
-                 1.0, SECONDARY_COST, "ally"),
+                 "Medical drone heals most-injured ally for 400% of Cecil's ATK.",
+                 4.0, SECONDARY_COST, "ally"),
         SkillDef("Black-Site Dossier",
                  "Apply ATK-down and SPD-down to an enemy for 2 turns.",
                  0.6, TERTIARY_COST, "enemy"),
@@ -102,8 +196,8 @@ SKILL_CATALOGUE: dict[str, list[SkillDef]] = {
                  "1.5× dmg + SPD×5 bonus damage.",
                  1.5, PRIMARY_COST, "enemy"),
         SkillDef("Speed Boost",
-                 "Grant an ally +3 SPD and +30 energy.",
-                 0.0, SECONDARY_COST, "ally"),
+                 "Grant an ally +3 SPD and +70 energy.",
+                 0.0, TERTIARY_COST, "ally"),
     ],
 
     "Wonder Woman": [

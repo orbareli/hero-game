@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const ELEMENT_COLOR = { Power: '#ef4444', Speed: '#22c55e', Tech: '#60a5fa' }
-const ELEMENT_ICON  = { Power: '⚡', Speed: '💨', Tech: '⚙' }
+const ELEMENT_COLOR = { Power: '#ef4444', Speed: '#22c55e', Tech: '#60a5fa', Mystic: '#c084fc', Bio: '#86efac', Cosmic: '#fbbf24' }
+const ELEMENT_ICON  = { Power: '⚡', Speed: '💨', Tech: '⚙', Mystic: '🔮', Bio: '🌿', Cosmic: '✨' }
 const RARITY_COLOR  = { C: '#94a3b8', R: '#60a5fa', SR: '#c084fc', UR: '#fbbf24' }
 const ENERGY_SKILL_COST = 50
 
@@ -26,12 +26,9 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
   const [damagePopups,  setDamagePopups]  = useState([])   // [{id,x,y,value,crit}]
   const [phase,         setPhase]         = useState('connecting')
   const [enemyActing,   setEnemyActing]   = useState(null) // highlighted enemy fighter
-  const [battleState, setBattleState] = useState({
-    player_team: [],
-    enemy_team: [],
-    turn_queue: [],
-    phase: 'loading'
-  });
+  const [critTargets,   setCritTargets]   = useState(new Set()) // fighter ids currently shaking
+  const [synergies,     setSynergies]     = useState([])           // active synergy bonuses
+
   const wsRef     = useRef(null)
   const logRef    = useRef(null)
   const popupId   = useRef(0)
@@ -67,6 +64,7 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
 
       case 'state':
         setState(msg.state)
+        if (msg.synergies?.length) setSynergies(msg.synergies)
         setPhase(msg.state.phase === 'player_input' ? 'player_turn' : 'enemy_turn')
         break
 
@@ -93,7 +91,6 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
         break
 
       case 'events':
-        // Add events to log and spawn damage popups
         msg.events.forEach(ev => {
           setEvents(prev => [...prev, { ...ev, id: Date.now() + Math.random() }])
           if (ev.damage > 0) {
@@ -101,6 +98,17 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
           }
           if (ev.heal > 0) {
             spawnHealPopup(ev.heal, ev.actor_team === 'player' ? 'left' : 'right')
+          }
+          // Crit shake: mark the target fighter for a shake animation
+          if (ev.crit && ev.target) {
+            setCritTargets(prev => new Set([...prev, ev.target]))
+            setTimeout(() => {
+              setCritTargets(prev => {
+                const next = new Set(prev)
+                next.delete(ev.target)
+                return next
+              })
+            }, 600)
           }
         })
         break
@@ -185,6 +193,17 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
         </AnimatePresence>
       </div>
 
+      {/* ── Synergy banners ── */}
+      {synergies.length > 0 && (
+        <div className="synergy-strip">
+          {synergies.map((s, i) => (
+            <div key={i} className="synergy-badge" title={s.detail}>
+              ✦ {s.name}
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* ── Enemy team row ── */}
       <div className="team-row enemy-row">
         {enemy_team.map((f, i) => (
@@ -195,6 +214,7 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
             isActive={enemyActing === i}
             isTarget={inputReq && selectedTarget === i}
             isSelectable={!!inputReq && f.is_alive}
+            isCritShaking={critTargets.has(f.name)}
             onClick={() => inputReq && setSelectedTarget(i)}
           />
         ))}
@@ -221,6 +241,7 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
             isActive={inputReq?.actor?.pc_id === f.pc_id}
             isTarget={false}
             isSelectable={false}
+            isCritShaking={critTargets.has(f.name)}
             onClick={() => {}}
           />
         ))}
@@ -330,6 +351,17 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
                   <span style={{ color: ELEMENT_COLOR[t.element], fontSize: '0.7rem' }}>
                     {' '}{ELEMENT_ICON[t.element]}
                   </span>
+                  {/* Element matchup hint vs the active actor */}
+                  {inputReq?.actor?.element && (() => {
+                    const actorElem = inputReq.actor.element
+                    const STRONG = { Power:['Speed','Bio'], Speed:['Tech','Mystic'], Tech:['Power','Cosmic'], Mystic:['Bio','Power'], Bio:['Cosmic','Speed'], Cosmic:['Mystic','Tech'] }
+                    const strong = STRONG[actorElem] || []
+                    if (strong[0] === t.element) return <span className="matchup strong">STRONG</span>
+                    if (strong[1] === t.element) return <span className="matchup effective">EFFECTIVE</span>
+                    const defStrong = STRONG[t.element] || []
+                    if (defStrong.includes(actorElem)) return <span className="matchup weak">WEAK</span>
+                    return null
+                  })()}
                 </button>
               ))}
             </div>
@@ -369,7 +401,7 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
 }
 
 // ── Fighter card ──────────────────────────────────────────────────────────────
-function FighterCard3v3({ fighter, side, isActive, isTarget, isSelectable, onClick }) {
+function FighterCard3v3({ fighter, side, isActive, isTarget, isSelectable, onClick, isCritShaking = false }) {
   const hpPct    = fighter.max_hp > 0 ? (fighter.hp / fighter.max_hp) * 100 : 0
   const energyPct = fighter.energy ?? 0
   const elemColor = ELEMENT_COLOR[fighter.element] || '#94a3b8'
@@ -380,10 +412,11 @@ function FighterCard3v3({ fighter, side, isActive, isTarget, isSelectable, onCli
       className={[
         'fighter-3v3',
         side,
-        isActive    ? 'active'    : '',
-        isTarget    ? 'targeted'  : '',
-        isSelectable ? 'selectable' : '',
-        !fighter.is_alive ? 'dead' : '',
+        isActive      ? 'active'     : '',
+        isTarget      ? 'targeted'   : '',
+        isSelectable  ? 'selectable' : '',
+        !fighter.is_alive ? 'dead'   : '',
+        isCritShaking ? 'crit-shake' : '',
       ].join(' ')}
       style={{ '--elem-color': elemColor }}
       onClick={isSelectable ? onClick : undefined}

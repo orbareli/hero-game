@@ -4,6 +4,7 @@ import BattleArena3v3 from './components/BattleArena3v3'
 import TeamBuilder from './components/TeamBuilder'
 import Roster from './components/Roster'
 import Shop from './components/Shop'
+import TowerMode from './components/TowerMode'
 import './App.css'
 
 const API = 'http://localhost:8000'
@@ -14,6 +15,7 @@ export default function App() {
   const [battleMode,   setBattleMode]   = useState('1v1')
   const [player,       setPlayer]       = useState(null)
   const [allChars,     setAllChars]     = useState([])
+  const [roster,       setRoster]       = useState([])   // player-owned characters
   const [error,        setError]        = useState(null)
   const [playerCharId, setPlayerCharId] = useState(null)
   const [enemyCharId,  setEnemyCharId]  = useState(null)
@@ -42,11 +44,12 @@ export default function App() {
         const cr = await fetch(`${API}/characters`)
         if (cr.ok) setAllChars(await cr.json())
 
-        // Load roster to pick a default 1v1 char
+        // Load roster — used by TowerMode picker, Roster tab, and default 1v1 char
         const rr = await fetch(`${API}/player/${pid}/roster`)
         if (rr.ok) {
-          const roster = await rr.json()
-          if (roster.length > 0) setPlayerCharId(roster[0].id)
+          const rosterData = await rr.json()
+          setRoster(rosterData)
+          if (rosterData.length > 0) setPlayerCharId(rosterData[0].id)
         }
       } catch (e) { setError(e.message) }
     }
@@ -55,8 +58,12 @@ export default function App() {
 
   const refreshPlayer = async () => {
     if (!player?.id) return
-    const r = await fetch(`${API}/player/${player.id}`)
-    if (r.ok) setPlayer(await r.json())
+    const [pr, rr] = await Promise.all([
+      fetch(`${API}/player/${player.id}`),
+      fetch(`${API}/player/${player.id}/roster`),
+    ])
+    if (pr.ok) setPlayer(await pr.json())
+    if (rr.ok) setRoster(await rr.json())
   }
 
   if (error) return (
@@ -85,10 +92,10 @@ export default function App() {
           <span className="brand-name">FIGHT GAME</span>
         </div>
         <nav className="header-nav">
-          {['battle', 'roster', 'shop'].map(t => (
+          {['battle', 'roster', 'shop', 'tower'].map(t => (
             <button key={t} className={`nav-btn ${tab === t ? 'active' : ''}`}
               onClick={() => setTab(t)}>
-              {t === 'battle' ? '⚔ Battle' : t === 'roster' ? '🧑‍🤝‍🧑 Roster' : '🏪 Shop'}
+              {t === 'battle' ? '⚔ Battle' : t === 'roster' ? '🧑‍🤝‍🧑 Roster' : t === 'shop' ? '🏪 Shop' : '🗼 Tower'}
             </button>
           ))}
         </nav>
@@ -154,6 +161,15 @@ export default function App() {
           <Roster
             playerId={player.id}
             onSelectFighter={(pcId) => { setPlayerCharId(pcId); setTab('battle') }}
+          />
+        )}
+
+        {tab === 'tower' && (
+          <TowerMode
+            playerId={player.id}
+            allChars={allChars}
+            roster={roster}
+            onBack={() => setTab('battle')}
           />
         )}
 

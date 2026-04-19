@@ -13,7 +13,6 @@ DB_NAME = "fight_game"
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URL)
 db = client[DB_NAME]
-
 # ------------------------------------------------------------------ #
 #  Master Character Definitions                                       #
 # ------------------------------------------------------------------ #
@@ -37,6 +36,215 @@ characters = [
         "skill_mult": 1.8,          # damage multiplier (1.0 = basic attack level)
         "skill_cd":   4,            # turns before skill can be used again
         "portrait_id": "omni man",   # used for future portrait images
+    },
+    {
+        "name": "monster-girl",
+        "faction": "villain",          # "hero" or "villain"
+        "element": "Power", # הוספת אלמנט
+        "rarity": "R",             # "C", "R", "SR", or "UR"
+        "base_hp":    1300,
+        "base_atk":   95,
+        "base_def":   20,
+        "base_spd":   2,            # higher = acts first
+        "base_crit":  10,           # % chance to crit
+        "base_evade": 5,           # % chance to dodge
+        "passive_name": "MyPassive",
+        "passive_desc": "Omni man s1",
+        "skill_name": "Primal Rage",
+        "skill_desc": "Deals 2.9x ATK damage but lose o.5x atk life",
+        "skill_mult": 2.9,          # damage multiplier (1.0 = basic attack level)
+        "skill_cd":   3,            # turns before skill can be used again
+        "portrait_id": "omni man",   # used for future portrait images
+    },
+        {
+        "name": "Saitama",
+        "faction": "hero",
+        "element": "Cosmic",
+        "rarity": "UR",
+        "base_hp":    2000,
+        "base_atk":   300,
+        "base_def":   5,
+        "base_spd":   7,
+        "base_crit":  3,
+        "base_evade": 20,
+        "passive_name": "Serious Punch",
+        "passive_desc": "Once per battle, when Saitama would be KO'd, he survives with 1 HP and next attack crits.",
+        "skill_name": "One Punch",
+        "skill_desc": "Single devastating punch. Ignores ALL DEF. Cannot miss.",
+        "skill_mult": 3.3,
+        "skill_cd":   6,
+        "portrait_id": "saitama",
+    },
+    {
+        "name": "Goku",
+        "faction": "hero",
+        "element": "Cosmic",
+        "rarity": "UR",
+        "base_hp":    2200,
+        "base_atk":   220,
+        "base_def":   15,
+        "base_spd":   10,
+        "base_crit":  20,
+        "base_evade": 20,
+        "passive_name": "Saiyan Pride",
+        "passive_desc": "When HP drops below 30%, Goku enters Kaioken: +40% ATK for the rest of the battle.",
+        "skill_name": "Kamehameha",
+        "skill_desc": "3.0× beam attack, ignores 40% DEF.",
+        "skill_mult": 3.0,
+        "skill_cd":   4,
+        "portrait_id": "goku",
+    },
+    {
+        "name": "Magneto",
+        "faction": "villain",
+        "element": "Mystic",
+        "rarity": "UR",
+        "base_hp":    1400,
+        "base_atk":   130,
+        "base_def":   30,
+        "base_spd":   6,
+        "base_crit":  18,
+        "base_evade": 15,
+        "passive_name": "Master of Magnetism",
+        "passive_desc": "Tech-element enemies take 40% more damage from Magneto (metal vulnerability).",
+        "skill_name": "Magnetic Crush",
+        "skill_desc": "2.2× dmg. Tech enemies take 40% bonus damage. Applies ATK-down.",
+        "skill_mult": 2.2,
+        "skill_cd":   4,
+        "portrait_id": "magneto",
+    },
+    {
+        "name": "Black Widow",
+        "faction": "hero",
+        "element": "Tech",
+        "rarity": "SR",
+        "base_hp":    1000,
+        "base_atk":   110,
+        "base_def":   20,
+        "base_spd":   10,
+        "base_crit":  40,
+        "base_evade": 30,
+        "passive_name": "Red Room Training",
+        "passive_desc": "Critical hits deal 2.0× bonus damage instead of 1.5×. Precision killer.",
+        "skill_name": "Widow's Bite",
+        "skill_desc": "1.6× dmg, guaranteed crit, stuns target for 1 turn.",
+        "skill_mult": 1.6,
+        "skill_cd":   3,
+        "portrait_id": "black_widow",
+    },
+    {
+        "name": "Thragg",
+        "faction": "villain",
+        "element": "Power",
+        "rarity": "UR",
+        "base_hp": 2400,
+        "base_atk": 150,
+        "base_def": 30,
+        "base_spd": 7,
+        "base_crit": 25,
+        "base_evade": 15,
+        "passive_name": "Dark Throne",
+        "passive_desc": "Increases ATK by 1% for every 5% HP lost.",
+        "skill_name": "Grand Regent's Might",
+        "skill_desc": "Unleashes a devastating blow dealing 3.5x damage.",
+        "skill_mult": 3.1,
+        "skill_cd": 5,
+        "portrait_id": "Thragg",
+    },
+    {
+        "name": "Thor",
+        "faction": "hero",
+        "element": "Power",
+        "rarity": "UR",
+        "base_hp": 1900,
+        "base_atk": 135,
+        "base_def": 40,
+        "base_spd": 3,
+        "base_crit": 15,
+        "base_evade": 5,
+        "passive_name": "God of Thunder",
+        "passive_desc": "Basic attacks have a 25% chance to shock the target.",
+        "skill_name": "Mjolnir's Strike",
+        "skill_desc": "Strikes with lightning for 2.8x damage.",
+        "skill_mult": 2.8,
+        "skill_cd": 4,
+        "portrait_id": "Thor",
+    },
+    {
+        "name": "Iron Man",
+        "faction": "hero",
+        "element": "Tech",
+        "rarity": "SR",
+        "base_hp": 1400,
+        "base_atk": 115,
+        "base_def": 30,
+        "base_spd": 4,
+        "base_crit": 12,
+        "base_evade": 10,
+        "passive_name": "Arc Reactor",
+        "passive_desc": "Regenerates 10 energy every turn.",
+        "skill_name": "Unibeam",
+        "skill_desc": "High precision beam dealing 2.2x damage.",
+        "skill_mult": 2.2,
+        "skill_cd": 3,
+        "portrait_id": "Iron Man",
+    },
+    {
+        "name": "Hulk",
+        "faction": "hero",
+        "element": "Power",
+        "rarity": "UR",
+        "base_hp":    3000,
+        "base_atk":   110,
+        "base_def":   10,
+        "base_spd":   3,
+        "base_crit":  10,
+        "base_evade": 5,
+        "passive_name": "Rage Engine",
+        "passive_desc": "The angrier Hulk gets (lower HP %), the more damage he deals. Gamma Slam scales with missing HP.",
+        "skill_name": "Gamma Slam",
+        "skill_desc": "2.5× dmg that grows with rage (missing HP %). The lower his HP, the harder he hits.",
+        "skill_mult": 2.5,
+        "skill_cd":   3,
+        "portrait_id": "Hulk",
+    },
+    {
+        "name": "Spider-Man",
+        "faction": "hero",
+        "element": "Speed",
+        "rarity": "SR",
+        "base_hp":    1100,
+        "base_atk":   115,
+        "base_def":   15,
+        "base_spd":   10,
+        "base_crit":  20,
+        "base_evade": 33,
+        "passive_name": "Spider-Sense",
+        "passive_desc": "Spidey's danger sense gives him a 20% chance to dodge any incoming attack for free.",
+        "skill_name": "Web Shot",
+        "skill_desc": "1.8× dmg + webs target, reducing their SPD by 4 for 2 turns.",
+        "skill_mult": 1.8,
+        "skill_cd":   3,
+        "portrait_id": "spiderman",
+    },
+    {
+        "name": "Soldier Boy",
+        "faction": "villain",
+        "element": "Power",
+        "rarity": "SR",
+        "base_hp":    1600,
+        "base_atk":   125,
+        "base_def":   20,
+        "base_spd":   6,
+        "base_crit":  20,
+        "base_evade": 10,
+        "passive_name": "Compound V Soldier",
+        "passive_desc": "Soldier Boy ignores 15% of enemy defense on all attacks — his shield absorbs punishment.",
+        "skill_name": "Compound V Blast",
+        "skill_desc": "2.0× dmg ignoring 60% DEF. Target ATK -25% for 2 turns.",
+        "skill_mult": 2.0,
+        "skill_cd":   4,
+        "portrait_id": "soldier_boy",
     },
     {
         "name": "invincible",
@@ -82,7 +290,7 @@ characters = [
         "element": "Power", # הוספת אלמנט
         "rarity": "UR",
         "base_hp": 1000,
-        "base_atk": 70,
+        "base_atk": 75,
         "base_def": 20,
         "base_spd": 4,
         "base_crit": 12,
@@ -293,7 +501,8 @@ characters = [
 
 async def run_seed():
     print(f"=== Connecting to MongoDB ({DB_NAME}) ===")
-
+    print(f"=== indexes ===")
+    await db.tower_sessions.create_index([("player_id", 1), ("status", 1)])
     # 1. Drop existing collections for a clean slate
     await db.characters.drop()
     await db.players.drop()
@@ -314,7 +523,7 @@ async def run_seed():
     print("\n=== Seeding Player ===")
     player_doc = {
         "username": "Player1",
-        "coins": 1500,
+        "coins": 11500,
         "gems": 10,
         "created_at": datetime.utcnow(),
     }
@@ -380,4 +589,5 @@ async def run_seed():
 
 
 if __name__ == "__main__":
+    import asyncio
     asyncio.run(run_seed())

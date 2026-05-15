@@ -1319,3 +1319,54 @@ body {
    These are already handled via inline ELEMENT_COLOR map,
    but set fallbacks here for the f3-element class */
 .f3-element { font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; }
+
+/* ── Tactical move buttons ───────────────────────────────────────── */
+.action-btn.tactical {
+  border: 2px solid #a78bfa;
+  background: rgba(167,139,250,0.08);
+  color: #a78bfa;
+  position: relative;
+}
+.action-btn.tactical:hover {
+  background: #a78bfa;
+  color: var(--bg-0);
+}
+
+/* Colour variants per move type */
+.action-btn.tactical-focus {
+  border-color: #fbbf24;
+  background: rgba(251,191,36,0.08);
+  color: #fbbf24;
+}
+.action-btn.tactical-focus:hover { background: #fbbf24; color: var(--bg-0); }
+
+.action-btn.tactical-guard {
+  border-color: #60a5fa;
+  background: rgba(96,165,250,0.08);
+  color: #60a5fa;
+}
+.action-btn.tactical-guard:hover { background: #60a5fa; color: var(--bg-0); }
+
+.action-btn.tactical-taunt {
+  border-color: #ef4444;
+  background: rgba(239,68,68,0.08);
+  color: #ef4444;
+}
+.action-btn.tactical-taunt:hover { background: #ef4444; color: var(--bg-0); }
+
+/* ── Tactical log entry ──────────────────────────────────────────── */
+.log-line.tactical, .log-entry.tactical {
+  border-left: 3px solid #a78bfa;
+  background: rgba(167,139,250,0.06);
+  font-style: italic;
+}
+
+/* ── Focused / Guarding status badges on fighter card ───────────── */
+.f3-effect.focused  { color: #fbbf24; background: rgba(251,191,36,0.2);  }
+.f3-effect.guarding { color: #60a5fa; background: rgba(96,165,250,0.2);  }
+.f3-effect.taunted  { color: #ef4444; background: rgba(239,68,68,0.2);   }
+
+/* Subtle glow on fighter card when they have an active tactical buff */
+.fighter-3v3:has(.f3-effect.focused)  { box-shadow: 0 0 12px rgba(251,191,36,0.35); }
+.fighter-3v3:has(.f3-effect.guarding) { box-shadow: 0 0 12px rgba(96,165,250,0.35); }
+.fighter-3v3:has(.f3-effect.taunted)  { box-shadow: 0 0 12px rgba(239,68,68,0.35); }

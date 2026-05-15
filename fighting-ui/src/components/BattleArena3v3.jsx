@@ -17,6 +17,8 @@ const ENERGY_SKILL_COST = 50
  */
 export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBattleEnd, onBack }) {
   const [state,         setState]         = useState(null)
+  // חפש בערך בשורה 20-30
+  const isStrangeAlive = state?.player_team?.some(f => f.name === "Dr. Strange" && f.hp > 0);
   const [events,        setEvents]        = useState([])   // battle log
   const [inputReq,      setInputReq]      = useState(null) // {actor, valid_targets, can_use_skill}
   const [selectedTarget, setSelectedTarget] = useState(null)
@@ -242,7 +244,8 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
             isTarget={false}
             isSelectable={false}
             isCritShaking={critTargets.has(f.name)}
-            onClick={() => {}}
+            onClick={() =>{console.log("Selected Ally Index:", i);  inputReq && setSelectedTarget(i)
+          }}
           />
         ))}
       </div>
@@ -324,6 +327,28 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
                   <span className="skill-cost">{skill.energy_cost}⚡</span>
                 </button>
               ))}
+              {/* ── Tactical move button — always free, no target ── */}
+              {inputReq.tactical && (
+                <button
+                  className={[
+                    'action-btn tactical',
+                    inputReq.tactical.move === 'focus' ? 'tactical-focus' : '',
+                    inputReq.tactical.move === 'guard' ? 'tactical-guard' : '',
+                    inputReq.tactical.move === 'taunt' ? 'tactical-taunt' : '',
+                    inputReq.tactical.move === 'siphon' ? 'tactical-siphon' : '',
+                  ].join(' ')}
+                  title={inputReq.tactical.desc}
+                  onClick={() => {
+                    setSelectedSkill(null)
+                    setTargetMode('enemy')
+                    sendAction('tactical', null)
+                  }}
+                >
+                  <span className="skill-icon">{inputReq.tactical.icon}</span>
+                  {inputReq.tactical.label}
+                  <span className="skill-cost">free</span>
+                </button>
+              )}
             </div>
 
             {/* Confirm button — shown when a skill is selected and needs a target */}
@@ -401,7 +426,7 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
 }
 
 // ── Fighter card ──────────────────────────────────────────────────────────────
-function FighterCard3v3({ fighter, side, isActive, isTarget, isSelectable, onClick, isCritShaking = false }) {
+function FighterCard3v3({ fighter, side, isActive, isTarget, isSelectable, onClick,isStrangeAlive, isCritShaking = false }) {
   const hpPct    = fighter.max_hp > 0 ? (fighter.hp / fighter.max_hp) * 100 : 0
   const energyPct = fighter.energy ?? 0
   const elemColor = ELEMENT_COLOR[fighter.element] || '#94a3b8'
@@ -417,12 +442,18 @@ function FighterCard3v3({ fighter, side, isActive, isTarget, isSelectable, onCli
         isSelectable  ? 'selectable' : '',
         !fighter.is_alive ? 'dead'   : '',
         isCritShaking ? 'crit-shake' : '',
+        (side === 'enemy' && isStrangeAlive) ? 'mystic-gaze' : '',
       ].join(' ')}
       style={{ '--elem-color': elemColor }}
       onClick={isSelectable ? onClick : undefined}
       animate={isActive ? { scale: 1.06 } : { scale: 1 }}
       whileHover={isSelectable ? { scale: 1.04, cursor: 'pointer' } : {}}
     >
+      {side === 'enemy' && isStrangeAlive && fighter.is_alive && (
+      <div className="mystic-eye-tag">
+        👁️ <span className="mystic-energy-text">{Math.floor(fighter.energy)}%</span>
+      </div>
+      )}
       {/* Element badge */}
       <div className="f3-element" style={{ color: elemColor }}>
         {ELEMENT_ICON[fighter.element]} {fighter.element}
@@ -430,6 +461,9 @@ function FighterCard3v3({ fighter, side, isActive, isTarget, isSelectable, onCli
 
       {/* Avatar */}
       <div className="f3-avatar">
+        {fighter.effects?.some(e => e.name === 'reflect') && (
+        <div className="reflect-shield-overlay">🪞</div>
+        )}
         {fighter.portrait_id && fighter.portrait_id !== 'default' ? (
           <img
             src={`/portraits/${fighter.portrait_id}.png`}
@@ -458,7 +492,15 @@ function FighterCard3v3({ fighter, side, isActive, isTarget, isSelectable, onCli
         />
       </div>
       <div className="f3-hp-text">{fighter.hp}/{fighter.max_hp}</div>
-
+      {!fighter.is_player && isStrangeAlive && fighter.is_alive && (
+        <div className="f3-energy-track enemy-mystic">
+          <motion.div
+            className="f3-energy-fill mystic"
+            animate={{ width: `${(fighter.energy / 100) * 100}%` }}
+            style={{ background: 'linear-gradient(90deg, #a855f7, #6b21a8)' }}
+          />
+        </div>
+      )}
       {/* Energy bar (player side only) */}
       {fighter.is_player && (
         <div className="f3-energy-track">
@@ -471,14 +513,34 @@ function FighterCard3v3({ fighter, side, isActive, isTarget, isSelectable, onCli
       )}
 
       {/* Status effects */}
-      {fighter.effects?.length > 0 && (
+      {fighter.effects?.filter(e => !['focused','guarding','taunted'].includes(e.name)).length > 0 && (
         <div className="f3-effects">
-          {fighter.effects.map((e, i) => (
-            <span key={i} className={`f3-effect ${e.name}`} title={`${e.name} (${e.turns}t)`}>
-              {e.name === 'poisoned' ? '☠' : e.name === 'atk_down' ? '↓ATK' : e.name === 'stunned' ? '⚡' : '?'}
-            </span>
-          ))}
+          {fighter.effects.filter(e => !['focused','guarding','taunted'].includes(e.name)).map((e, i) => {
+            const EFFECT_META = {
+              poisoned:      { icon: '☠', label: 'Poison',  cls: 'effect-poison'  },
+              burning:       { icon: '🔥', label: 'Burn',    cls: 'effect-burn'    },
+              stunned:       { icon: '💫', label: 'Stun',    cls: 'effect-stun'    },
+              frozen:        { icon: '❄', label: 'Frozen',  cls: 'effect-frozen'  },
+              atk_down:      { icon: '↓A', label: 'ATK↓',   cls: 'effect-debuff'  },
+              spd_down:      { icon: '↓S', label: 'SPD↓',   cls: 'effect-debuff'  },
+              regenerating:  { icon: '💚', label: 'Regen',   cls: 'effect-regen'   },
+              empowered:     { icon: '💪', label: 'Emp',     cls: 'effect-buff'    },
+              reflect:       { icon: '🪞', label: 'Reflect', cls: 'effect-buff'    },
+              marked:        { icon: '🎯', label: 'Marked',  cls: 'effect-debuff'  },
+            }
+            const meta = EFFECT_META[e.name] || { icon: '?', label: e.name, cls: 'effect-debuff' }
+            return (
+              <span key={i} className={`f3-effect ${meta.cls}`} title={`${meta.label} (${e.turns} turns)`}>
+                <span className="effect-icon">{meta.icon}</span>
+                <span className="effect-turns">{e.turns}</span>
+              </span>
+            )
+          })}
         </div>
+      )}
+      {/* Poison overlay pulse */}
+      {fighter.effects?.some(e => e.name === 'poisoned') && fighter.is_alive && (
+        <div className="poison-overlay" />
       )}
 
       {/* Dead overlay */}
@@ -519,6 +581,28 @@ function EnergyBar({ energy }) {
 function LogLine({ event }) {
   if (event.type === 'round') {
     return <div className="log-round">{event.detail}</div>
+  }
+  if (event.action === 'effect_tick') {
+    const TICK_STYLE = {
+      poisoned:     { cls: 'log-poison-tick',  tag: '☠ POISON' },
+      burning:      { cls: 'log-burn-tick',    tag: '🔥 BURN'  },
+      regenerating: { cls: 'log-regen-tick',   tag: '💚 REGEN' },
+      frozen:       { cls: 'log-frozen-tick',  tag: '❄ FROZEN' },
+    }
+    const style = TICK_STYLE[event.effect] || { cls: 'log-effect-tick', tag: '⚡ EFFECT' }
+    return (
+      <motion.div
+        className={`log-line ${style.cls}`}
+        initial={{ opacity: 0, x: -4 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.15 }}
+      >
+        <span className="log-tick-tag">{style.tag}</span>
+        <span className="log-detail">{event.detail}</span>
+        {event.damage > 0 && <span className="log-dmg">-{event.damage}</span>}
+        {event.heal   > 0 && <span className="log-heal">+{event.heal}</span>}
+      </motion.div>
+    )
   }
   const isPlayer = event.actor_team === 'player'
   const isError  = event.type === 'error'

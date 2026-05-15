@@ -69,7 +69,59 @@
     gap: 18px;
   }
 }
+.f3-energy-fill.siphoning {
+  animation: energy-pulse 0.5s ease-in-out;
+  background: #a855f7; /* צבע סגול לשאיבה */
+}
 
+@keyframes energy-pulse {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(2); scale: 1.05; }
+  100% { filter: brightness(1); }
+}
+/* --- Dr. Strange Mystic UI --- */
+
+.mystic-eye-container {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26, 0, 46, 0.9);
+  border: 1px solid #a855f7;
+  border-radius: 12px;
+  padding: 2px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+  z-index: 20;
+  animation: mysticFloat 3s ease-in-out infinite;
+}
+
+.mystic-energy-val {
+  color: #e9d5ff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-shadow: 0 0 5px #a855f7;
+}
+
+.reflect-badge {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 5px #00d4ff);
+  animation: pulseReflect 2s infinite;
+}
+
+/* אנימציות */
+@keyframes mysticFloat {
+  0%, 100% { transform: translate(-50%, 0px); }
+  50% { transform: translate(-50%, -5px); }
+}
+
+@keyframes pulseReflect {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
 #next-steps {
   display: flex;
   border-top: 1px solid var(--border);
@@ -181,4 +233,153 @@
     right: 0;
     border-right-color: var(--border);
   }
+}
+/* ── Status Effect Badges (f3-effects row) ─────────────────────────────────── */
+.f3-effect {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.effect-icon  { font-size: 0.75rem; }
+.effect-turns { font-size: 0.6rem; opacity: 0.85; }
+
+/* Poison — sickly green/purple */
+.effect-poison {
+  background: rgba(134, 25, 143, 0.30);
+  border: 1px solid #a855f7;
+  color: #d8b4fe;
+  animation: poison-pulse 1.4s ease-in-out infinite;
+}
+
+/* Burn — orange/red */
+.effect-burn {
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid #f97316;
+  color: #fdba74;
+  animation: burn-flicker 0.9s ease-in-out infinite;
+}
+
+/* Stun */
+.effect-stun {
+  background: rgba(234, 179, 8, 0.25);
+  border: 1px solid #eab308;
+  color: #fef08a;
+}
+
+/* Frozen */
+.effect-frozen {
+  background: rgba(96, 165, 250, 0.25);
+  border: 1px solid #60a5fa;
+  color: #bfdbfe;
+}
+
+/* Generic debuffs */
+.effect-debuff {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid #f87171;
+  color: #fca5a5;
+}
+
+/* Buffs / regen */
+.effect-buff {
+  background: rgba(34, 197, 94, 0.18);
+  border: 1px solid #22c55e;
+  color: #86efac;
+}
+
+.effect-regen {
+  background: rgba(34, 197, 94, 0.22);
+  border: 1px solid #4ade80;
+  color: #bbf7d0;
+  animation: regen-glow 1.6s ease-in-out infinite;
+}
+
+/* ── Poison overlay on the fighter card ────────────────────────────────────── */
+.poison-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  border: 2px solid #a855f7;
+  box-shadow:
+    inset 0 0 14px rgba(168, 85, 247, 0.35),
+    0 0 8px rgba(168, 85, 247, 0.25);
+  animation: poison-border-pulse 1.4s ease-in-out infinite;
+  z-index: 5;
+}
+
+/* ── Battle log — effect tick rows ─────────────────────────────────────────── */
+.log-line.log-poison-tick {
+  background: rgba(134, 25, 143, 0.15);
+  border-left: 3px solid #a855f7;
+  color: #d8b4fe;
+}
+
+.log-line.log-burn-tick {
+  background: rgba(239, 68, 68, 0.12);
+  border-left: 3px solid #f97316;
+  color: #fdba74;
+}
+
+.log-line.log-regen-tick {
+  background: rgba(34, 197, 94, 0.12);
+  border-left: 3px solid #22c55e;
+  color: #86efac;
+}
+
+.log-line.log-frozen-tick {
+  background: rgba(96, 165, 250, 0.12);
+  border-left: 3px solid #60a5fa;
+  color: #bfdbfe;
+}
+
+.log-line.log-effect-tick {
+  background: rgba(148, 163, 184, 0.10);
+  border-left: 3px solid #94a3b8;
+  color: #cbd5e1;
+}
+
+.log-tick-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(168, 85, 247, 0.25);
+  color: #e9d5ff;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.log-line.log-burn-tick   .log-tick-tag { background: rgba(249,115,22,0.25);  color: #fed7aa; }
+.log-line.log-regen-tick  .log-tick-tag { background: rgba(34,197,94,0.25);   color: #bbf7d0; }
+.log-line.log-frozen-tick .log-tick-tag { background: rgba(96,165,250,0.25);  color: #bfdbfe; }
+
+/* ── Keyframe animations ────────────────────────────────────────────────────── */
+@keyframes poison-pulse {
+  0%, 100% { opacity: 1;    box-shadow: none; }
+  50%       { opacity: 0.75; box-shadow: 0 0 6px #a855f7; }
+}
+
+@keyframes poison-border-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1;   box-shadow: inset 0 0 20px rgba(168,85,247,0.5), 0 0 12px rgba(168,85,247,0.4); }
+}
+
+@keyframes burn-flicker {
+  0%, 100% { opacity: 1; }
+  40%       { opacity: 0.6; }
+  70%       { opacity: 0.85; }
+}
+
+@keyframes regen-glow {
+  0%, 100% { box-shadow: none; }
+  50%       { box-shadow: 0 0 8px #22c55e; }
 }

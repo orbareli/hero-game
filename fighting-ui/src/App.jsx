@@ -5,6 +5,8 @@ import TeamBuilder from './components/TeamBuilder'
 import Roster from './components/Roster'
 import Shop from './components/Shop'
 import TowerMode from './components/TowerMode'
+import PvPLobby from './components/PvPLobby'
+import PvPBattle from './components/PvPBattle'
 import './App.css'
 
 const API = 'http://localhost:8000'
@@ -23,6 +25,8 @@ export default function App() {
   // 3v3 team state
   const [playerTeam3,  setPlayerTeam3]  = useState([])
   const [enemyTeam3,   setEnemyTeam3]   = useState([])
+  const [pvpData, setPvpData] = useState(null); // ישמור את ה-WS וה-initialState
+  const [pvpPhase, setPvpPhase] = useState('lobby'); // 'lobby' או 'battle'
 
   // Load player on mount
   useEffect(() => {
@@ -92,7 +96,7 @@ export default function App() {
           <span className="brand-name">FIGHT GAME</span>
         </div>
         <nav className="header-nav">
-          {['battle', 'roster', 'shop', 'tower'].map(t => (
+          {['battle', 'roster', 'shop', 'tower', 'pvp'].map(t => (
             <button key={t} className={`nav-btn ${tab === t ? 'active' : ''}`}
               onClick={() => setTab(t)}>
               {t === 'battle' ? '⚔ Battle' : t === 'roster' ? '🧑‍🤝‍🧑 Roster' : t === 'shop' ? '🏪 Shop' : '🗼 Tower'}
@@ -152,6 +156,32 @@ export default function App() {
                 enemyTeam={enemyTeam3}
                 onBattleEnd={(outcome) => { refreshPlayer() }}
                 onBack={() => setBattleMode('setup3v3')}
+              />
+            )}
+          </>
+        )}
+        {tab === 'pvp' && (
+          <>
+            {pvpPhase === 'lobby' ? (
+              <PvPLobby 
+                playerId={player.id} 
+                roster={roster} 
+                onBattleReady={(data) => {
+                  setPvpData(data);
+                  setPvpPhase('battle');
+                }}
+                onBack={() => setTab('battle')}
+              />
+            ) : (
+              <PvPBattle 
+                ws={pvpData.ws} 
+                role={pvpData.role} 
+                initialState={pvpData.initialState}
+                onBack={() => {
+                  setPvpPhase('lobby');
+                  setTab('battle');
+                  refreshPlayer();
+                }}
               />
             )}
           </>

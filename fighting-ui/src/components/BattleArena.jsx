@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const API = 'http://localhost:8000'
-
+//const API = 'http://localhost:8000'
+const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 const RARITY_COLOR = { C: '#94a3b8', R: '#60a5fa', SR: '#c084fc', UR: '#fbbf24' }
 const FACTION_ICON = { hero: '🦸', villain: '💀' }
 
@@ -94,7 +94,9 @@ export default function BattleArena({
     setIsFighting(true)
     setStatus('connecting')
 
-    const ws = new WebSocket(`ws://localhost:8000/ws/battle`)
+    //const ws = new WebSocket(`ws://localhost:8000/ws/battle`)
+    const wsBase = (import.meta.env.VITE_WS_URL || `ws://${window.location.hostname}:8000`)
+    const ws = new WebSocket(`${wsBase}/ws/battle`)
     wsRef.current = ws
 
     ws.onopen = () => {

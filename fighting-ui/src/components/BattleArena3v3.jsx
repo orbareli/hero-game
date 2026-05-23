@@ -37,7 +37,9 @@ export default function BattleArena3v3({ playerId, playerTeam, enemyTeam, onBatt
 
   // ── Connect WebSocket ─────────────────────────────────────────────────────
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8000/ws/battle3')
+    //const ws = new WebSocket('ws://localhost:8000/ws/battle3')
+    const wsBase = (import.meta.env.VITE_WS_URL )
+    const ws = new WebSocket(`${wsBase}/ws/battle3`|| `ws://${window.location.hostname}:8000`)
     wsRef.current = ws
 
     ws.onopen = () => {
